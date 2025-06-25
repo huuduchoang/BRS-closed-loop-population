@@ -7,7 +7,7 @@ N =5;
 % Heterogeneity (you can set any sigma to zero if you want no variability)
 Eleak_mu    = -65;   Eleak_sigma    = 0;
 gNaP_mu     =   2.8; gNaP_sigma     = 0;
-gsyn_mu     =   0.015;gsyn_sigma     = 0.011;
+gsyn_mu     =   0.012;gsyn_sigma     = 0.01;
 phi_mu      =   0.3; phi_sigma      = 0;
 thetaO2_mu  =  85;   thetaO2_sigma  = 0;
 sigmaO2_mu  =  30;   sigmaO2_sigma  = 0;
