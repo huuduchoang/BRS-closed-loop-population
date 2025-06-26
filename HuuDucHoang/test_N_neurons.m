@@ -5,9 +5,9 @@ clear all, close all
 N =5; 
 
 % Heterogeneity (you can set any sigma to zero if you want no variability)
-Eleak_mu    = -65;   Eleak_sigma    = 9;
+Eleak_mu    = -65;   Eleak_sigma    = 0;
 gNaP_mu     =   2.8; gNaP_sigma     = 0;
-gsyn_mu     =   0.1;gsyn_sigma     = 0.025;
+gsyn_mu     =   5;   gsyn_sigma     = 0;
 phi_mu      =   0.3; phi_sigma      = 0;
 thetaO2_mu  =  85;   thetaO2_sigma  = 0;
 sigmaO2_mu  =  30;   sigmaO2_sigma  = 0;
