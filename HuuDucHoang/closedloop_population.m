@@ -86,7 +86,7 @@ tau_s = 5;
 k_r = 1;
 thetas = -10; % half-activation
 sigmas = -5;
-s_inf = 1./ (1 + exp(-(v - thetas)/sigmas));
+s_inf = 1./ (1 + exp((v - thetas)/sigmas));
 g_in = gsyn.' * s;
 Isyn = g_in .* (v - Esyn);
 

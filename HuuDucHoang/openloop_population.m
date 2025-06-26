@@ -1,14 +1,13 @@
 function z = openloop_population(t,u,params)
 
-% params.N           = number of pacemaker neurons
-% params.Eleak_mu    = mean of E_L (mV)
-% params.Eleak_sigma = sd   of E_L (mV)
-% params.gNaP_mu     = mean of g_NaP (nS)
-% params.gNaP_sigma  = sd   of g_NaP (nS)
-% params.gsyn_mu     = mean of g_syn  (nS)
-% params.gsyn_sigma  = sd   of g_syn  (nS)
-
-global gtonic_open
+%     params.N           - number of neurons
+%     params.El       - N×1 vector of E_L draws
+%     params.gnap        - N×1 vector of g_NaP draws
+%     params.gsyn        - N×N matrix of g_syn draws (zero diagonal)
+%     params.phi         - N×1 vector of chemosensory φ draws
+%     params.thetaO2     - N×1 vector of θ_O2 draws
+%     params.sigmaO2     - N×1 vector of σ_O2 draws
+%     params.gtonic      - value of tonic conductance
 
 %% Unpack State variables
 
@@ -73,12 +72,12 @@ tau_s = 5;
 k_r = 1;
 thetas = -10; % half-activation
 sigmas = -5;
-s_inf = 1./ (1 + exp(-(v - thetas)/sigmas));
-g_in = gsyn.' * s;
+s_inf = 1./ (1 + exp((v - thetas)/sigmas));
+g_in = gsyn * s;
 Isyn = g_in .* (v - Esyn);
 
 % tonic
-Itonic = gtonic_open .* (v-Esyn);
+Itonic = params.gtonic .* (v-Esyn);
 
 %% Motor pool
 
