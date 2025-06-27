@@ -38,7 +38,7 @@ PO2blood0= initsA(7);
 u0 = [v0; n0; h0; s0; alpha0; voll0; PO2lung0; PO2blood0];
 
 %% Integrate with ode15s
-tf      = 50000;   % ms
+tf      = 600000;   % ms
 opts    = odeset('RelTol',1e-9,'AbsTol',1e-9);
 [t,U]   = ode15s(@(t,u) closedloop_population(t,u,params), [0 tf], u0, opts);
 time_s  = t/1000;
