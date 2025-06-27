@@ -32,9 +32,9 @@ function gstar = find_gsyn_threshold_with_O2()
   u0_base  = [v0; n0; h0; s0; alpha0; voll0; po2l0; po2b0];
 
   %% 2) Bracket gL, gH so T(gL)>targetT, T(gH)<targetT
-  gL = 0;
+  gL = 4.375;
   [TL,~] = computeMetrics(gL);
-  gH = 0.01;
+  gH = 4.5;
   [TH,~] = computeMetrics(gH);
   while TH > targetT
     gH = 2*gH;
