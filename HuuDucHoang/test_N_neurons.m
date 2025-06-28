@@ -7,7 +7,7 @@ N =5;
 % Heterogeneity (you can set any sigma to zero if you want no variability)
 Eleak_mu    = -65;   Eleak_sigma    = 0;
 gNaP_mu     =   2.8; gNaP_sigma     = 0;
-gsyn_mu     =   5;   gsyn_sigma     = 0;
+gsyn_mu     =   1;   gsyn_sigma     = 0;
 phi_mu      =   0.3; phi_sigma      = 0;
 thetaO2_mu  =  85;   thetaO2_sigma  = 0;
 sigmaO2_mu  =  30;   sigmaO2_sigma  = 0;
@@ -38,7 +38,7 @@ PO2blood0= initsA(7);
 u0 = [v0; n0; h0; s0; alpha0; voll0; PO2lung0; PO2blood0];
 
 %% Integrate with ode15s
-tf      = 600000;   % ms
+tf      = 60000;   % ms
 opts    = odeset('RelTol',1e-9,'AbsTol',1e-9);
 [t,U]   = ode15s(@(t,u) closedloop_population(t,u,params), [0 tf], u0, opts);
 time_s  = t/1000;
