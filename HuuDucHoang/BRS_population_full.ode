@@ -1,0 +1,195 @@
+# cpg_5pop.ode
+# 5-cell closed-loop respiratory CPG for XPP/XPPAUT
+# Continuation parameter: gsyn
+
+param c=21
+param gsyn=0.02
+param gnap=2.8
+param gna=28
+param gk=11.2
+param gl=2.8
+param ena=50
+param ek=-85
+param el=-65
+param esyn=0
+
+param theta_mp=-40
+param sigma_mp=-6
+param theta_h=-48
+param sigma_h=6
+param taumax_h=10000
+
+param theta_m=-34
+param sigma_m=-5
+param theta_n=-29
+param sigma_n=-4
+param taumax_n=10
+
+param tau_s=5
+param k_r=1
+param theta_s=-10
+param sigma_s=-5
+
+param r=0.001
+param tmax=1
+param vt=2
+param kp=5
+
+param e1=0.0025
+param e2=0.4
+param vol0=2
+
+param po2ext=(760-47)*0.21
+param rgas=62.364
+param temp=310
+param taulb=500
+
+param m=8e-6
+param hb=150
+param volblood=5
+param eta=hb*1.36
+param beta_o2=0.03
+
+param c_o2=2.5
+param k_o2=26
+
+param phi=0.3
+param theta_o2=85
+param sigma_o2=30  
+
+
+v1'       = (-inap1-ina1-ik1-il1-iton1-isyn1)/c
+v2'       = (-inap2-ina2-ik2-il2-iton2-isyn2)/c
+v3'       = (-inap3-ina3-ik3-il3-iton3-isyn3)/c
+v4'       = (-inap4-ina4-ik4-il4-iton4-isyn4)/c
+v5'       = (-inap5-ina5-ik5-il5-iton5-isyn5)/c
+
+n1'       = (n_inf1-n1)/tau_n1
+n2'       = (n_inf2-n2)/tau_n2
+n3'       = (n_inf3-n3)/tau_n3
+n4'       = (n_inf4-n4)/tau_n4
+n5'       = (n_inf5-n5)/tau_n5
+
+h1'       = (h_inf1-h1)/tau_h1
+h2'       = (h_inf2-h2)/tau_h2
+h3'       = (h_inf3-h3)/tau_h3
+h4'       = (h_inf4-h4)/tau_h4
+h5'       = (h_inf5-h5)/tau_h5
+
+s1'       = ((1-s1)*s_inf1 - k_r*s1)/tau_s
+s2'       = ((1-s2)*s_inf2 - k_r*s2)/tau_s
+s3'       = ((1-s3)*s_inf3 - k_r*s3)/tau_s
+s4'       = ((1-s4)*s_inf4 - k_r*s4)/tau_s
+s5'       = ((1-s5)*s_inf5 - k_r*s5)/tau_s
+
+alpha'    = r*tpop*(1-alpha) - r*alpha
+vol'	  = -e1*(vol-vol0) + e2*alpha
+po2lung'  = (1/vol)*(po2ext-po2lung) * if((-e1*(vol-vol0)+e2*alpha)>0)then(-e1*(vol-vol0)+e2*alpha)else(0) - (1/taulb)*(po2lung-po2blood)*(vol/(rgas*temp))
+po2blood' = (((1/taulb)*(po2lung-po2blood)*(vol/(rgas*temp))) - m*(eta*sa_o2 + beta_o2*po2blood)*(volblood/22400)) / ((volblood/22400)*(beta_o2 + eta*partial))
+
+
+mp_inf1 = 1/(1+exp((v1-theta_mp)/sigma_mp)) 
+inap1 = gnap*mp_inf1*h1*(v1-ena)
+mp_inf2 = 1/(1+exp((v2-theta_mp)/sigma_mp))
+inap2 = gnap*mp_inf2*h2*(v2-ena)
+mp_inf3 = 1/(1+exp((v3-theta_mp)/sigma_mp))
+inap3 = gnap*mp_inf3*h3*(v3-ena)
+mp_inf4 = 1/(1+exp((v4-theta_mp)/sigma_mp))
+inap4 = gnap*mp_inf4*h4*(v4-ena)
+mp_inf5 = 1/(1+exp((v5-theta_mp)/sigma_mp))
+inap5 = gnap*mp_inf5*h5*(v5-ena)
+
+h_inf1  = 1/(1+exp((v1-theta_h)/sigma_h))
+h_inf2  = 1/(1+exp((v2-theta_h)/sigma_h))
+h_inf3  = 1/(1+exp((v3-theta_h)/sigma_h))
+h_inf4  = 1/(1+exp((v4-theta_h)/sigma_h))
+h_inf5  = 1/(1+exp((v5-theta_h)/sigma_h))
+
+tau_h1 = taumax_h/cosh((v1-theta_h)/(2*sigma_h))
+tau_h2 = taumax_h/cosh((v2-theta_h)/(2*sigma_h))
+tau_h3 = taumax_h/cosh((v3-theta_h)/(2*sigma_h))
+tau_h4 = taumax_h/cosh((v4-theta_h)/(2*sigma_h))
+tau_h5 = taumax_h/cosh((v5-theta_h)/(2*sigma_h))
+
+m_inf1  = 1/(1+exp((v1-theta_m)/sigma_m))
+ina1  = gna*(m_inf1^3)*(1-n1)*(v1-ena)
+m_inf2  = 1/(1+exp((v2-theta_m)/sigma_m))
+ina2  = gna*(m_inf2^3)*(1-n2)*(v2-ena)
+m_inf3  = 1/(1+exp((v3-theta_m)/sigma_m))
+ina3  = gna*(m_inf3^3)*(1-n3)*(v3-ena)
+m_inf4  = 1/(1+exp((v4-theta_m)/sigma_m))
+ina4  = gna*(m_inf4^3)*(1-n4)*(v4-ena)
+m_inf5  = 1/(1+exp((v5-theta_m)/sigma_m))
+ina5  = gna*(m_inf5^3)*(1-n5)*(v5-ena)
+
+n_inf1 = 1/(1+exp((v1-theta_n)/sigma_n))
+tau_n1 = taumax_n/cosh((v1-theta_n)/(2*sigma_n))
+
+n_inf2 = 1/(1+exp((v2-theta_n)/sigma_n))
+tau_n2 = taumax_n/cosh((v2-theta_n)/(2*sigma_n))
+
+n_inf3 = 1/(1+exp((v3-theta_n)/sigma_n))
+tau_n3 = taumax_n/cosh((v3-theta_n)/(2*sigma_n))
+
+n_inf4 = 1/(1+exp((v4-theta_n)/sigma_n))
+tau_n4 = taumax_n/cosh((v4-theta_n)/(2*sigma_n))
+
+n_inf5 = 1/(1+exp((v5-theta_n)/sigma_n))
+tau_n5 = taumax_n/cosh((v5-theta_n)/(2*sigma_n))
+
+ik1     = gk*(n1^4)*(v1-ek)
+ik2     = gk*(n2^4)*(v2-ek)
+ik3     = gk*(n3^4)*(v3-ek)
+ik4     = gk*(n4^4)*(v4-ek)
+ik5     = gk*(n5^4)*(v5-ek)
+
+il1     = gl*(v1-el)
+il2     = gl*(v2-el)
+il3     = gl*(v3-el)
+il4     = gl*(v4-el)
+il5     = gl*(v5-el)
+
+s_inf1  = 1/(1+exp((v1-theta_s)/sigma_s))
+s_inf2  = 1/(1+exp((v2-theta_s)/sigma_s))
+s_inf3  = 1/(1+exp((v3-theta_s)/sigma_s))
+s_inf4  = 1/(1+exp((v4-theta_s)/sigma_s))
+s_inf5  = 1/(1+exp((v5-theta_s)/sigma_s))
+
+isyn1   = gsyn*(s2+s3+s4+s5)*(v1-esyn)
+isyn2   = gsyn*(s1+s3+s4+s5)*(v2-esyn)
+isyn3   = gsyn*(s1+s2+s4+s5)*(v3-esyn)
+isyn4   = gsyn*(s1+s2+s3+s5)*(v4-esyn)
+isyn5   = gsyn*(s1+s2+s3+s4)*(v5-esyn)
+
+tpop    = tmax*(1/(1+exp(-(v1-vt)/kp))+1/(1+exp(-(v2-vt)/kp))+1/(1+exp(-(v3-vt)/kp))+1/(1+exp(-(v4-vt)/kp))+1/(1+exp(-(v5-vt)/kp)))/5
+
+sa_o2   = po2blood^c_o2/(po2blood^c_o2+k_o2^c_o2)
+partial = (c_o2*po2blood^(c_o2-1))*(1/(po2blood^c_o2+k_o2^c_o2) - po2blood^c_o2/(po2blood^c_o2+k_o2^c_o2)^2)
+jlb     = (1/taulb)*(po2lung-po2blood)*(vol/(rgas*temp))
+jbt     = m*(eta*sa_o2 + beta_o2*po2blood)*(volblood/22400)
+
+gton  = phi*(1 - tanh((po2blood - theta_o2)/sigma_o2))
+iton1 = gton*(v1 - esyn)
+iton2 = gton*(v2 - esyn)
+iton3 = gton*(v3 - esyn)
+iton4 = gton*(v4 - esyn)
+iton5 = gton*(v5 - esyn)
+
+
+init v1=-58.5754, v2=-58.5754, v3=-58.5754, v4=-58.5754, v5=-58.5754
+init n1=0.0006, n2=0.0006, n3=0.0006, n4=0.0006, n5=0.0006
+init h1=0.7252, h2=0.7252, h3=0.7252, h4=0.7252, h5=0.7252
+init s1=0, s2=0, s3=0, s4=0, s5=0
+init alpha=0.0010
+init vol=2.2665
+init po2lung=103.3461
+init po2blood=102.2229
+
+@ total=40000,dt=.1,meth=cvode,maxstor=10000000
+@ tol=1e-8,atol=1e-8
+@ xlo=0,xhi=40000,ylo=-80,yhi=2000
+
+@ parmin=-100,parmax=100,autoxmin=-2,autoxmax=2,autoymin=-80,autoymax=20
+@ dsmin=1e-4,dsmax=.1,nmax=500
+
+done
