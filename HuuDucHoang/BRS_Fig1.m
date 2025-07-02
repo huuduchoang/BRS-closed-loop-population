@@ -13,7 +13,7 @@ nCols = numel(gtonic_vals);
 nJobs = nRows * nCols;
 
 %% 2) Simulation settings
-N      = 2;
+N      = 5;
 tmax   = 65000;   % total simulation time (ms)
 tDiscard = 60000; % ms to discard as transient
 tspan  = [0 tmax];
