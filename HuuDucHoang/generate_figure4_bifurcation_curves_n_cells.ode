@@ -4,15 +4,15 @@
 ## 3) Keystrokes to run simulation and compute bifurcation curve: (i)(g)(i)(l)(f)(a)(r)(s)
 ## 4) Keystrokes to save the data: (f)(w), and then click on Ok 
 #
-# Modified 2025-07-02 by PJT and HDH from generate_figure4_bifurcation_curves_autapse.ode 
-# to have two cells connected by a pair of synapses. 
+# Modified 2025-07-03 by HDH from generate_figure4_bifurcation_curves_two_cells.ode 
+# to have five cells connected by synapses. 
 
 # BRS model fast subsystem with h as bifurcation parameter
 par h=-2
 
 # Set gtonic as described above for accordingly for panels A-D
-par gtonic=0.3 
-#par gtonic=0.1247
+#par gtonic=0.3 
+par gtonic=0.1247
 #par gtonic=0.2194
 #par gtonic=0.1806
 
@@ -50,15 +50,16 @@ itonic(v)=gtonic*(v-etonic)
 v[1..2]' = (i-il(v[j])-ina(v[j],n[j])-ik(v[j],n[j])-inap(v[j],h)-itonic(v[j])-isyn[j])/c
 n[1..2]'=(ninf(v[j])-n[j])/taun(v[j])
 
-# synapses (cell 1->2 and cell 2->1)
+# synapses
 p gsyn=0.1,esyn=0,k_r=1,theta_s=-10,sigma_s=-5,tau_s=5
 sinf(v)=1/(1+exp((v-theta_s)/sigma_s))
-
-#isyn1=0
-#isyn2=0
-
-isyn1=gsyn*s2*(v1-esyn)
-isyn2=gsyn*s1*(v2-esyn)
+isyn1=gsyn*(s2)*(v1-esyn)
+isyn2=gsyn*(s1)*(v2-esyn)
+#isyn3=gsyn*(s1+s2+s4)*(v3-esyn)
+#isyn4=gsyn*(s1+s2+s3)*(v4-esyn)
+#isyn5=gsyn*(s1+s2+s3+s4+s6)*(v5-esyn)
+#isyn6=gsyn*(s1+s2+s3+s4+s5)*(v6-esyn)
+#isyn7=gsyn*(s1+s2+s3+s4+s5+s6)*(v7-esyn)
 
 # Note s1 is the synaptic activation for all the synapses from 1->x for x not=1 #
 s[1..2]'=((1-s[j])*sinf(v[j]) - k_r*s[j])/tau_s

@@ -1,11 +1,11 @@
 # 5‐cell fast‐subsystem (v,n,h,s) for AUTO continuation
 
 # 1) Model parameters
-param h       = 0.5
+param h       = -2.0
 
 # set gsyn and gtonic accordingly
-param gsyn    = 2.0
-param gtonic  = 0.18
+param gsyn    = 0.1
+param gtonic  = 0.3
 
 param c        = 21
 param gnap     = 2.8
@@ -39,61 +39,61 @@ ina1  = gna*m_inf(v1)^3*(1-n1)*(v1-ena)
 ik1   = gk*(n1^4)*(v1-ek)
 il1   = gl*(v1-el)
 iton1 = gtonic*(v1-esyn)
-isyn1 = gsyn*(s2+s3+s4+s5)*(v1-esyn)
+isyn1 = gsyn*(s2+s3+s4)*(v1-esyn)
 
 inap2 = gnap*pinf(v2)*h*(v2-ena)
 ina2  = gna*m_inf(v2)^3*(1-n2)*(v2-ena)
 ik2   = gk*(n2^4)*(v2-ek)
 il2   = gl*(v2-el)
 iton2 = gtonic*(v2-esyn)
-isyn2 = gsyn*(s1+s3+s4+s5)*(v2-esyn)
+isyn2 = gsyn*(s1+s3+s4)*(v2-esyn)
 
 inap3 = gnap*pinf(v3)*h*(v3-ena)
 ina3  = gna*m_inf(v3)^3*(1-n3)*(v3-ena)
 ik3   = gk*(n3^4)*(v3-ek)
 il3   = gl*(v3-el)
 iton3 = gtonic*(v3-esyn)
-isyn3 = gsyn*(s1+s2+s4+s5)*(v3-esyn)
+isyn3 = gsyn*(s1+s2+s4)*(v3-esyn)
 
 inap4 = gnap*pinf(v4)*h*(v4-ena)
 ina4  = gna*m_inf(v4)^3*(1-n4)*(v4-ena)
 ik4   = gk*(n4^4)*(v4-ek)
 il4   = gl*(v4-el)
 iton4 = gtonic*(v4-esyn)
-isyn4 = gsyn*(s1+s2+s3+s5)*(v4-esyn)
+isyn4 = gsyn*(s1+s2+s3)*(v4-esyn)
 
-inap5 = gnap*pinf(v5)*h*(v5-ena)
-ina5  = gna*m_inf(v5)^3*(1-n5)*(v5-ena)
-ik5   = gk*(n5^4)*(v5-ek)
-il5   = gl*(v5-el)
-iton5 = gtonic*(v5-esyn)
-isyn5 = gsyn*(s1+s2+s3+s4)*(v5-esyn)
+#inap5 = gnap*pinf(v5)*h*(v5-ena)
+#ina5  = gna*m_inf(v5)^3*(1-n5)*(v5-ena)
+#ik5   = gk*(n5^4)*(v5-ek)
+#il5   = gl*(v5-el)
+#iton5 = gtonic*(v5-esyn)
+#isyn5 = gsyn*(s1+s2+s3+s4)*(v5-esyn)
 
 # 4) Fast‐subsystem ODEs
 v1' = (-inap1 - ina1 - ik1 - il1 - iton1 - isyn1)/c
 v2' = (-inap2 - ina2 - ik2 - il2 - iton2 - isyn2)/c
 v3' = (-inap3 - ina3 - ik3 - il3 - iton3 - isyn3)/c
 v4' = (-inap4 - ina4 - ik4 - il4 - iton4 - isyn4)/c
-v5' = (-inap5 - ina5 - ik5 - il5 - iton5 - isyn5)/c
+#v5' = (-inap5 - ina5 - ik5 - il5 - iton5 - isyn5)/c
 
 n1' = (ninf(v1) - n1)/taux(v1,theta_n,sigma_n,taumax_n)
 n2' = (ninf(v2) - n2)/taux(v2,theta_n,sigma_n,taumax_n)
 n3' = (ninf(v3) - n3)/taux(v3,theta_n,sigma_n,taumax_n)
 n4' = (ninf(v4) - n4)/taux(v4,theta_n,sigma_n,taumax_n)
-n5' = (ninf(v5) - n5)/taux(v5,theta_n,sigma_n,taumax_n)
+#n5' = (ninf(v5) - n5)/taux(v5,theta_n,sigma_n,taumax_n)
 
 s1' = ((1 - s1)*sinf(v1) - k_r*s1)/tau_s
 s2' = ((1 - s2)*sinf(v2) - k_r*s2)/tau_s
 s3' = ((1 - s3)*sinf(v3) - k_r*s3)/tau_s
 s4' = ((1 - s4)*sinf(v4) - k_r*s4)/tau_s
-s5' = ((1 - s5)*sinf(v5) - k_r*s5)/tau_s
+#s5' = ((1 - s5)*sinf(v5) - k_r*s5)/tau_s
 
 # 5) Initial conditions
-init v1=-60, n1=0.01, s1=0
-init v2=-60, n2=0.01, s2=0
-init v3=-60, n3=0.01, s3=0
-init v4=-60, n4=0.01, s4=0
-init v5=-60, n5=0.01, s5=0
+init v1=-60, n1=0, s1=0
+init v2=-60, n2=0, s2=0
+init v3=-60, n3=0, s3=0
+init v4=-60, n4=0, s4=0
+# init v5=-60, n5=0.01, s5=0
 
 # 6) XPP settings
 @ total=40000,dt=.1,meth=cvode,maxstor=10000000
