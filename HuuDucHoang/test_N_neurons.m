@@ -1,16 +1,31 @@
 % test_N_neurons.m
-clear all, close all
-
 %% Number of neurons and heterogeneity settings
-N =5; 
+N =22; 
 
 % Heterogeneity (you can set any sigma to zero if you want no variability)
-Eleak_mu    = -65;   Eleak_sigma    = 0;
-gNaP_mu     =   2.8; gNaP_sigma     = 0;
-gsyn_mu     =   1;   gsyn_sigma     = 0;
-phi_mu      =   0.3; phi_sigma      = 0;
-thetaO2_mu  =  85;   thetaO2_sigma  = 0;
-sigmaO2_mu  =  30;   sigmaO2_sigma  = 0;
+
+% Leads to period-halving pattern
+% Reduce to 5% max --> Standard Period
+% Eleak_mu    = -65;   Eleak_sigma    = 2;
+% gNaP_mu     =   2.8; gNaP_sigma     = 0.1;
+% gsyn_mu     =   0.1;   gsyn_sigma     = 0.005;
+% phi_mu      =   0.3; phi_sigma      = 0.003;
+% thetaO2_mu  =  85;   thetaO2_sigma  = 8.5;
+% sigmaO2_mu  =  30;   sigmaO2_sigma  = 3;
+
+% Eleak_mu    = -65;   Eleak_sigma    = 0;
+% gNaP_mu     =   2.8; gNaP_sigma     = 0;
+% gsyn_mu     =   0.1;   gsyn_sigma     = 0;
+% phi_mu      =   0.3; phi_sigma      = 0;
+% thetaO2_mu  =  85;   thetaO2_sigma  = 0;
+% sigmaO2_mu  =  30;   sigmaO2_sigma  = 0;
+
+Eleak_mu    = -65;   Eleak_sigma    = 2;
+gNaP_mu     =   2.8; gNaP_sigma     = 0.1;
+gsyn_mu     =   0.1;   gsyn_sigma     = 0.005;
+phi_mu      =   0.3; phi_sigma      = 0.003;
+thetaO2_mu  =  85;   thetaO2_sigma  = 3;
+sigmaO2_mu  =  30;   sigmaO2_sigma  = 1;
 
 % Build the params struct (all draws happen inside)
 params = setup_params( ...
@@ -24,7 +39,13 @@ params = setup_params( ...
 
 %% Initial conditions (use the same inits for each cell)
 % Single-cell inits from Diekman et al. 2017 (panel A):
-initsA = [-58.5754 0.0006 0.7252 0.0010 2.2665 103.3461 102.2229];
+% -41.7429 0.0313 0.3442 0.0025 2.4355 23.9533 23.3940
+% -58.5754 0.0006 0.7252 0.0010 2.2665 103.3461 102.222
+% -61.9818 0.0006 0.7252 0.0001157 2.02995 116.445 114.901 (eupneic, gsyn =
+% 0.5, sigma = 0.1)
+% -60.3782 0.0006 0.667918 0.00136 2.3223 99.1582 98.0934
+%[V n h alpha vollung PO2lung PO2blood]
+initsA = [-60.3782 0.0006 0.667918 0.00136 2.3223 99.1582 98.0934];
 
 v0       = repmat(initsA(1), N, 1);
 n0       = repmat(initsA(2), N, 1);
@@ -38,7 +59,7 @@ PO2blood0= initsA(7);
 u0 = [v0; n0; h0; s0; alpha0; voll0; PO2lung0; PO2blood0];
 
 %% Integrate with ode15s
-tf      = 60000;   % ms
+tf      = 100000;   % ms
 opts    = odeset('RelTol',1e-9,'AbsTol',1e-9);
 [t,U]   = ode15s(@(t,u) closedloop_population(t,u,params), [0 tf], u0, opts);
 time_s  = t/1000;
@@ -46,10 +67,10 @@ time_s  = t/1000;
 %% 4) Extract all per‐neuron and loop signals
 V_all    = U(:,    1:N);         % t×N
 h_all    = U(:,2*N+1:3*N);       % t×N (for fig 2)
-PO2_b    = U(:,4*N+4);           % t×1
 alpha    = U(:,4*N+1);           % t×1
 vol_lung = U(:,4*N+2);           % t×1
 PO2_lung = U(:,4*N+3);           % t×1
+PO2_b    = U(:,4*N+4);           % t×1
 
 % compute g_tonic for all neurons
 phi_vec = params.phi;

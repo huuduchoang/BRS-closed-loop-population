@@ -5,7 +5,7 @@
 ## 4) Keystrokes to save the data: (f)(w), and then click on Ok 
 #
 # Modified 2025-07-03 by HDH from generate_figure4_bifurcation_curves_two_cells.ode 
-# to have five cells connected by synapses. 
+# to have n cells connected by synapses. 
 
 # BRS model fast subsystem with h as bifurcation parameter
 par h=-2
@@ -53,8 +53,8 @@ n[1..2]'=(ninf(v[j])-n[j])/taun(v[j])
 # synapses
 p gsyn=0.1,esyn=0,k_r=1,theta_s=-10,sigma_s=-5,tau_s=5
 sinf(v)=1/(1+exp((v-theta_s)/sigma_s))
-isyn1=gsyn*(s2)*(v1-esyn)
-isyn2=gsyn*(s1)*(v2-esyn)
+isyn[1]=gsyn*(s2)*(v1-esyn)
+isyn[2]=gsyn*(s1)*(v2-esyn)
 #isyn3=gsyn*(s1+s2+s4)*(v3-esyn)
 #isyn4=gsyn*(s1+s2+s3)*(v4-esyn)
 #isyn5=gsyn*(s1+s2+s3+s4+s6)*(v5-esyn)
