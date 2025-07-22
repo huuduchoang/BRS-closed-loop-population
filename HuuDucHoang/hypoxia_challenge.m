@@ -1,6 +1,6 @@
 % Duration of chemosensory feedback interruption
-breakDur = 120000;
-seed = 12345;
+breakDur = 100000;
+seed = 1;
 rng(seed, 'twister');
 
 %% Number of neurons and heterogeneity settings
@@ -24,7 +24,7 @@ params = setup_params( ...
     thetaO2_mu,  thetaO2_sigma, ...
     sigmaO2_mu,  sigmaO2_sigma);
 
-params.gClamp = 0.001;
+params.gClamp = 0.01;
 
 %% Initial conditions
 initsA = [-60.3782 0.0006 0.667918 0.00136 2.3223 99.1582 98.0934];
