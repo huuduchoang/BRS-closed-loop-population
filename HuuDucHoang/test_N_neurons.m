@@ -1,9 +1,17 @@
 % test_N_neurons.m
 %% Number of neurons and heterogeneity settings
 N = 20; 
-seed = 1; % Abnormal Eupneic
-% seed = 2; % Normal Eupneic
-% seed = 5;
+% seed = 1; % Abnormal Eupneic (19 vs 9) (First Mode)
+% seed = 2; % Normal Eupneic (constant 18) (Second Mode)
+% seed = 3; % Normal Eupneic (constant 18) (Second Mode)
+% seed = 4; % Normal Eupneic (17 vs 16) (First Mode)
+% seed = 5; % Abnormal Eupneic (20 vs 8) (First Mode)
+% seed = 6; % Abnormal Eupneic (19 vs 12 average?)
+% seed = 7; % Abnormal Eupneic (Alternate 7~9 to 19)
+% seed = 9; % Normal Eupneic (constant 19)
+seed = 10; % Nonlinear Response, Heart Failure?
+
+
 rng(seed, 'twister');
 
 % Heterogeneity (you can set any sigma to zero if you want no variability)
@@ -63,7 +71,7 @@ PO2blood0= initsA(7);
 u0 = [v0; n0; h0; s0; alpha0; voll0; PO2lung0; PO2blood0];
 
 %% Integrate with ode15s
-tf      = 60000;   % ms
+tf      = 400000;   % ms
 opts    = odeset('RelTol',1e-9,'AbsTol',1e-9);
 [t,U]   = ode15s(@(t,u) closedloop_population(t,u,params), [0 tf], u0, opts);
 time_s  = t/1000;
@@ -75,6 +83,8 @@ alpha    = U(:,4*N+1);           % t×1
 vol_lung = U(:,4*N+2);           % t×1
 PO2_lung = U(:,4*N+3);           % t×1
 PO2_b    = U(:,4*N+4);           % t×1
+
+[burstTimes, Nspike] = track_spikes_per_burst(time_s, PO2_b, V_all);
 
 % compute g_tonic for all neurons
 phi_vec = params.phi;
