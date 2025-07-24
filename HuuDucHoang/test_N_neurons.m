@@ -1,16 +1,26 @@
 % test_N_neurons.m
 %% Number of neurons and heterogeneity settings
 N = 20; 
-% seed = 1; % Abnormal Eupneic (19 vs 9) (First Mode)
-% seed = 2; % Normal Eupneic (constant 18) (Second Mode)
-% seed = 3; % Normal Eupneic (constant 18) (Second Mode)
-% seed = 4; % Normal Eupneic (17 vs 16) (First Mode)
-% seed = 5; % Abnormal Eupneic (20 vs 8) (First Mode)
-% seed = 6; % Abnormal Eupneic (19 vs 12 average?)
-% seed = 7; % Abnormal Eupneic (Alternate 7~9 to 19)
+% seed = 1; % Stable Alternans (19 vs 9) (First Mode)
+seed = 2; % Normal Eupneic (constant 18) (Second Mode)
+% seed = 3; % Normal Eupneic (constant 19, run for 200ms) (Second Mode)
+% seed = 4; % Stable Alternans (17 vs 16) (First Mode)
+% seed = 5; % Stable Alternans (20 vs 8) (First Mode)
+% seed = 6; % Unstable/Noisy Alternans (19 vs 11/12/13)
+% seed = 7; % Unstable/Noisy Alternans (Alternate 7~9 to 19) 
 % seed = 9; % Normal Eupneic (constant 19)
-seed = 10; % Nonlinear Response, Heart Failure?
-
+% seed = 10; % Nonlinear Response, Heart Failure? (Mode 3)
+% seed = 11; % Unstable/Noisy Alternans (17 vs 9 with some noises)
+% seed = 12; % Unstable Alternans (20 vs 11)
+% seed = 13; % Noisy Alternans (Alternate 9 to 14~15) --> Recheck at longer
+% runtime
+% seed = 14; % Stable Alternans (19 vs 18)
+% seed = 15; % Normal Eupneic (constant 19, occasional 20)
+% seed = 16; % Noisy Alternans  (20 vs 9, occasional 8)
+% seed = 17; % Normal Eupneic (constant 17)
+% seed = 18; % Noisy Alternans (Alternate 13~14 to 15~16)
+% seed = 19; % Normal Eupneic (constant 19) 
+% seed = 20; % Nonlinear/Irregular (most of peaks and troughs of 15 vs 12)
 
 rng(seed, 'twister');
 
@@ -71,7 +81,7 @@ PO2blood0= initsA(7);
 u0 = [v0; n0; h0; s0; alpha0; voll0; PO2lung0; PO2blood0];
 
 %% Integrate with ode15s
-tf      = 400000;   % ms
+tf      = 100000;   % ms
 opts    = odeset('RelTol',1e-9,'AbsTol',1e-9);
 [t,U]   = ode15s(@(t,u) closedloop_population(t,u,params), [0 tf], u0, opts);
 time_s  = t/1000;
