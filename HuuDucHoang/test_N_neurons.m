@@ -2,15 +2,16 @@
 %% Number of neurons and heterogeneity settings
 N = 20; 
 % seed = 1; % Stable Alternans (19 vs 9) (First Mode)
-seed = 2; % Normal Eupneic (constant 18) (Second Mode)
+% seed = 2; % Normal Eupneic (constant 18) (Second Mode)
 % seed = 3; % Normal Eupneic (constant 19, run for 200ms) (Second Mode)
 % seed = 4; % Stable Alternans (17 vs 16) (First Mode)
 % seed = 5; % Stable Alternans (20 vs 8) (First Mode)
 % seed = 6; % Unstable/Noisy Alternans (19 vs 11/12/13)
-% seed = 7; % Unstable/Noisy Alternans (Alternate 7~9 to 19) 
-% seed = 9; % Normal Eupneic (constant 19)
+% seed = 7; % Unstable/Noisy Alternans (Alternate 7~9 to 19)
+% seed = 8; % Normal Eupneic (constant 19)
+% seed = 9; % Stable Alternans (19 vs 4)
 % seed = 10; % Nonlinear Response, Heart Failure? (Mode 3)
-% seed = 11; % Unstable/Noisy Alternans (17 vs 9 with some noises)
+% seed = 11; % Unstable Alternans (17 vs 9)
 % seed = 12; % Unstable Alternans (20 vs 11)
 % seed = 13; % Noisy Alternans (Alternate 9 to 14~15) --> Recheck at longer
 % runtime
@@ -19,8 +20,8 @@ seed = 2; % Normal Eupneic (constant 18) (Second Mode)
 % seed = 16; % Noisy Alternans  (20 vs 9, occasional 8)
 % seed = 17; % Normal Eupneic (constant 17)
 % seed = 18; % Noisy Alternans (Alternate 13~14 to 15~16)
-% seed = 19; % Normal Eupneic (constant 19) 
-% seed = 20; % Nonlinear/Irregular (most of peaks and troughs of 15 vs 12)
+% seed = 19; % Stable Alternans (19 vs 3) 
+seed = 20; % Nonlinear/Irregular (most of peaks and troughs of 15 vs 12)
 
 rng(seed, 'twister');
 
@@ -59,6 +60,8 @@ params = setup_params( ...
     thetaO2_mu,  thetaO2_sigma, ...
     sigmaO2_mu,  sigmaO2_sigma);
 
+save( sprintf('saved_params_seed%d.mat',seed), 'params' );
+
 %% Initial conditions (use the same inits for each cell)
 % Single-cell inits from Diekman et al. 2017 (panel A):
 % -41.7429 0.0313 0.3442 0.0025 2.4355 23.9533 23.3940
@@ -81,7 +84,7 @@ PO2blood0= initsA(7);
 u0 = [v0; n0; h0; s0; alpha0; voll0; PO2lung0; PO2blood0];
 
 %% Integrate with ode15s
-tf      = 100000;   % ms
+tf      = 500000;   % ms
 opts    = odeset('RelTol',1e-9,'AbsTol',1e-9);
 [t,U]   = ode15s(@(t,u) closedloop_population(t,u,params), [0 tf], u0, opts);
 time_s  = t/1000;

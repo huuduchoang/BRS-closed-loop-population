@@ -1,28 +1,30 @@
 % Duration of chemosensory feedback interruption
-breakDur = 137000;
-seed = 6; % somewhere between 136s and 137s)
-rng(seed, 'twister');
+breakDur = 80000; % Continue from here
+% seed = 6; % somewhere between 136s and 137s)
+seed = 2;
 
-%% Number of neurons and heterogeneity settings
-N =20; 
+load( sprintf('saved_params_seed%d.mat',seed), 'params' );
 
-% Heterogeneity (you can set any sigma to zero if you want no variability)
-Eleak_mu    = -65;   Eleak_sigma    = 2;
-gNaP_mu     =   2.8; gNaP_sigma     = 0.1;
-gsyn_mu     =   0.1;   gsyn_sigma     = 0.005;
-phi_mu      =   0.3; phi_sigma      = 0.003;
-thetaO2_mu  =  85;   thetaO2_sigma  = 8.5;
-sigmaO2_mu  =  30;   sigmaO2_sigma  = 3;
-
-% Build the params struct (all draws happen inside)
-params = setup_params( ...
-    N, ...
-    Eleak_mu,    Eleak_sigma, ...
-    gNaP_mu,     gNaP_sigma, ...
-    gsyn_mu,     gsyn_sigma, ...
-    phi_mu,      phi_sigma, ...
-    thetaO2_mu,  thetaO2_sigma, ...
-    sigmaO2_mu,  sigmaO2_sigma);
+% %% Number of neurons and heterogeneity settings
+% N =20; 
+% 
+% % Heterogeneity (you can set any sigma to zero if you want no variability)
+% Eleak_mu    = -65;   Eleak_sigma    = 2;
+% gNaP_mu     =   2.8; gNaP_sigma     = 0.1;
+% gsyn_mu     =   0.1;   gsyn_sigma     = 0.005;
+% phi_mu      =   0.3; phi_sigma      = 0.003;
+% thetaO2_mu  =  85;   thetaO2_sigma  = 8.5;
+% sigmaO2_mu  =  30;   sigmaO2_sigma  = 3;
+% 
+% % Build the params struct (all draws happen inside)
+% params = setup_params( ...
+%     N, ...
+%     Eleak_mu,    Eleak_sigma, ...
+%     gNaP_mu,     gNaP_sigma, ...
+%     gsyn_mu,     gsyn_sigma, ...
+%     phi_mu,      phi_sigma, ...
+%     thetaO2_mu,  thetaO2_sigma, ...
+%     sigmaO2_mu,  sigmaO2_sigma);
 
 params.gClamp = 0.01;
 
@@ -58,7 +60,7 @@ params.clamp = true;
 inits3 = U2(end, :);
 params.clamp = false;
 
-[t3,U3]   = ode15s(@(t,u) closedloop_population_clampgtonic(t,u,params), [tf+breakDur tf+breakDur+tf*2], inits3, opts);
+[t3,U3]   = ode15s(@(t,u) closedloop_population_clampgtonic(t,u,params), [tf+breakDur tf+breakDur+tf*3], inits3, opts);
 
 t = [t1; t2; t3];
 u = [U1; U2; U3];

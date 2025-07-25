@@ -11,12 +11,8 @@ function [burstTimes, Nspike] = track_spikes_per_burst(time_s, PO2_b, V_all)
 
   %% 1) Find all local minima (troughs) and maxima (peaks) in PO2_b
   %   We use findpeaks on -PO2_b to get troughs
-  [~, troughLocs] = findpeaks(-PO2_b, time_s, ...
-                              'MinPeakProminence',1, ...   % adjust if needed
-                              'MinPeakDistance',1);         % at least 1 s apart
-  [peakVals, peakLocs] = findpeaks( PO2_b, time_s, ...
-                              'MinPeakProminence',1, ...
-                              'MinPeakDistance',1);
+  [~, troughLocs] = findpeaks(-PO2_b, time_s, 'MinPeakDistance',1);         % at least 1 s apart
+  [peakVals, peakLocs] = findpeaks( PO2_b, time_s,'MinPeakDistance',1);
 
   % Make sure every peak has a preceding trough
   peakLocs = peakLocs(peakLocs > min(troughLocs));
