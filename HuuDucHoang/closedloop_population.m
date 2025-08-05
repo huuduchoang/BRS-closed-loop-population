@@ -61,7 +61,7 @@ mp_inf = 1 ./ (1+exp((v-theta_mp)/sigma_mp));
 h_inf = 1 ./ (1+exp((v-theta_h)/sigma_h));
 tau_h = taumax_h ./ cosh((v-theta_h)/(2*sigma_h));
 
-Inap = gnap .* mp_inf .* h .* (v-Ena); % Element-wise multiplication
+Inap = gnap .* mp_inf .* h .* (v-Ena);
 
 % transient sodium
 theta_m = -34; sigma_m = -5;
