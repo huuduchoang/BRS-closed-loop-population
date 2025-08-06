@@ -3,7 +3,7 @@ seeds  = 1:20;                           % your 20 seed files
 nSeeds = numel(seeds);
 Mvals  = 2e-6 : 0.1e-6 : 18e-6;          % metabolic‐demand sweep
 nM     = numel(Mvals);
-tf_sec = 60000;                            % seconds per block
+tf = 60000;                            % seconds per block
 warmup = 200000;                         % ms warm‐up
   
 %% pre‐alloc
@@ -16,12 +16,13 @@ for si = 1:nSeeds
   % load that seed's heterogeneous params
   S = load(sprintf('saved_params_seed%d.mat',seed),'params');
   params = S.params;
+  params.M = 8e-6;
   
   initsA = [-60.3782 0.0006 0.667918 0.00136 2.3223 99.1582 98.0934];
-  v0       = repmat(initsA(1), N, 1);
-  n0       = repmat(initsA(2), N, 1);
-  h0       = repmat(initsA(3), N, 1);
-  s0       = zeros(N,1);
+  v0       = repmat(initsA(1), params.N, 1);
+  n0       = repmat(initsA(2), params.N, 1);
+  h0       = repmat(initsA(3), params.N, 1);
+  s0       = zeros(params.N,1);
   alpha0   = initsA(4);
   voll0    = initsA(5);
   PO2lung0 = initsA(6);
