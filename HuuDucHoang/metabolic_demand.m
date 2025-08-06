@@ -4,7 +4,7 @@ clear all
 N = 20;
 Eleak_mu    = -65;   Eleak_sigma    = 0;
 gNaP_mu     =   2.8; gNaP_sigma     = 0;
-gsyn_mu     =   0;   gsyn_sigma     = 0;
+gsyn_mu     =   0.1;   gsyn_sigma     = 0;
 phi_mu      =   0.3; phi_sigma      = 0;
 thetaO2_mu  =  85;   thetaO2_sigma  = 0;
 sigmaO2_mu  =  30;   sigmaO2_sigma  = 0;
@@ -33,7 +33,7 @@ PO2blood0= initsA(7);
 u0 = [v0; n0; h0; s0; alpha0; voll0; PO2lung0; PO2blood0];
 
 tf   = 60000;
-opts = odeset('RelTol',1e-9,'AbsTol',1e-9);
+opts = odeset('RelTol',1e-8,'AbsTol',1e-8);
 
 %% 3) Warm‐up at reference M to get a steady starting state
 params.M = 8e-6;
@@ -47,7 +47,7 @@ U1_closed_end = U1c(end,:);
 U1_open_end   = U1o(end,:);
 
 %% 4) Sweep M in parallel
-Mvals = 2e-6:0.1e-6:18e-6;
+Mvals = 18e-6:0.1e-6:36e-6;
 nM    = numel(Mvals);
 
 avgClosed = nan(1,nM);
@@ -94,7 +94,7 @@ set(0,'DefaultAxesFontSize',24)
 figure; hold on
 plot(Mvals,avgClosed,'k-','LineWidth',3)
 plot(Mvals,avgOpen,  'b-','LineWidth',3)
-xlim([.2e-5 18e-6]), ylim([1 140])
+xlim([18e-6 36e-6]), ylim([1 140])
 xlabel('$M$','Interpreter','latex','FontSize',24)
 ylabel('$P_\mathrm{a}O_2$','Interpreter','latex','FontSize',24)
 h = legend('closed loop','open loop','Location','Northeast');
