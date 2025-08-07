@@ -32,7 +32,8 @@ allAvgLin  = nan(numel(jobs),1);        % 1-D for parfor friendliness
 if isempty(gcp('nocreate')), parpool; end
 
 % ---------- main parallel loop ------------------------------------------
-parfor idx = 1:numel(jobs)
+nJobs = size(jobs,1);
+parfor idx = 1:nJobs
     si = jobs(idx,1);                        % seed index
     mi = jobs(idx,2);                        % M-value index
 
@@ -60,20 +61,43 @@ end   % parfor
 
 % ---------- reshape & analyse -------------------------------------------
 allAvg = reshape(allAvgLin,nSeeds,nM);
-meanPO2 = mean(allAvg,1);
-stdPO2  = std(allAvg,0,1);
 
 % ---------- plot --------------------------------------------------------
-x = Mvals*1e5;
-figure('Color','w'); hold on
-fill([x fliplr(x)],[meanPO2+stdPO2 fliplr(meanPO2-stdPO2)],...
-     [0.8 1 0.8],'EdgeColor','none');
-plot(x,meanPO2,'k-','LineWidth',2);
-xlabel('M \times 10^{-5}','FontSize',14);
-ylabel('\langle P_{a}O_2\rangle\pm1\,SD (mmHg)',...
+x = Mvals * 1e5;   
+
+% grab nSeeds distinct colors
+colors = distinguishable_colors(nSeeds, [1 1 1]);
+
+figure('Color','w');
+hold on;
+
+% 1) plot each seed’s curve
+for si = 1:nSeeds
+    plot(x, allAvg(si,:), 'Color', colors(si,:), 'LineWidth', 1.2);
+end
+
+% 2) compute mean and SEM
+meanPO2 = mean(allAvg, 1);
+semPO2  = std(allAvg, 0, 1) / sqrt(nSeeds);
+
+% 3) shaded ± SEM envelope
+fill( [x, fliplr(x)], ...
+      [meanPO2 + semPO2, fliplr(meanPO2 - semPO2)], ...
+      [0.9 0.9 0.9], 'EdgeColor','none');
+
+% 4) mean curve
+plot(x, meanPO2, 'k-', 'LineWidth', 2);
+
+xlabel('M \times 10^{-5}', 'FontSize',14);
+ylabel('\langle P_{a}O_2\rangle \pm SEM (mmHg)', ...
        'Interpreter','latex','FontSize',14);
-grid on; box on; xlim([min(x) max(x)]);
-legend('1 SD envelope','Mean','Location','SouthWest');
+grid on; box on;
+xlim([min(x) max(x)]);
+
+% if you want a legend:
+legend_entries = [arrayfun(@(s) sprintf('seed %d',s),1:nSeeds,'uni',0), ...
+                  {'\pm1SEM envelope','Mean'}];
+legend(legend_entries, 'Location','SouthWest','Interpreter','none');
 end
 %%
 function p = setupParams(seed)
