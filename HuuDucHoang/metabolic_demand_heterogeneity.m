@@ -23,10 +23,9 @@ parfor si = 1:nSeeds
 end
 
 % ---------- job list (seed, M) ------------------------------------------
-[jSeed,jM] = ndgrid(1:nSeeds, 1:nM);
-jobs       = [jSeed(:), jM(:)];         % #jobs = 3220
-
-allAvgLin  = nan(numel(jobs),1);        % 1-D for parfor friendliness
+[jSeed,jM] = ndgrid(1:nSeeds, 1:nM);    % jSeed is 20x181 matrix with columns of 1:nSeeds, jM is 20x181 matrix with rows of 1:nM
+jobs       = [jSeed(:), jM(:)];         % jobs = 3220x2 matrix
+allAvgLin  = nan(size(jobs,1),1);
 
 % ---------- spin up pool if needed --------------------------------------
 if isempty(gcp('nocreate')), parpool; end
@@ -66,7 +65,7 @@ allAvg = reshape(allAvgLin,nSeeds,nM);
 x = Mvals * 1e5;   
 
 % grab nSeeds distinct colors
-colors = distinguishable_colors(nSeeds, [1 1 1]);
+colors = distinguishable_colors(nSeeds);
 
 figure('Color','w');
 hold on;
