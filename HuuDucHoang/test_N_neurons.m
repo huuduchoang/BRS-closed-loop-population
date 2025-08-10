@@ -2,7 +2,7 @@
 %% Number of neurons and heterogeneity settings
 N = 20; 
 % seed = 1; % Stable Alternans (19 vs 9) (First Mode)
-seed = 2; % Normal Eupneic (constant 18) (Second Mode)
+% seed = 2; % Normal Eupneic (constant 18) (Second Mode)
 % seed = 3; % Normal Eupneic (constant 19, run for 200ms) (Second Mode)
 % seed = 4; % Stable Alternans (17 vs 16) (First Mode)
 % seed = 5; % Stable Alternans (20 vs 8) (First Mode)
@@ -10,7 +10,7 @@ seed = 2; % Normal Eupneic (constant 18) (Second Mode)
 % seed = 7; % Unstable/Noisy Alternans (Alternate 7~9 to 19)
 % seed = 8; % Normal Eupneic (constant 19)
 % seed = 9; % Stable Alternans (19 vs 4)
-% seed = 10; % Nonlinear Response, Heart Failure? (Mode 3)
+seed = 10; % Nonlinear Response, Heart Failure? (Mode 3)
 % seed = 11; % Unstable Alternans (17 vs 9)
 % seed = 12; % Unstable Alternans (20 vs 11)
 % seed = 13; % Noisy Alternans (Alternate 9 to 14~15) --> Recheck at longer
@@ -60,7 +60,7 @@ params = setup_params( ...
     thetaO2_mu,  thetaO2_sigma, ...
     sigmaO2_mu,  sigmaO2_sigma);
 
-% save( sprintf('saved_params_seed%d.mat',seed), 'params' );
+save( sprintf('saved_params_seed%d.mat',seed), 'params' );
 
 %% Initial conditions (use the same inits for each cell)
 % Single-cell inits from Diekman et al. 2017 (panel A):
@@ -84,7 +84,7 @@ PO2blood0= initsA(7);
 u0 = [v0; n0; h0; s0; alpha0; voll0; PO2lung0; PO2blood0];
 
 %% Integrate with ode15s
-tf      = 60000;   % ms
+tf      = 200000;   % ms
 opts    = odeset('RelTol',1e-9,'AbsTol',1e-9);
 [t,U]   = ode15s(@(t,u) closedloop_population(t,u,params), [0 tf], u0, opts);
 time_s  = t/1000;
