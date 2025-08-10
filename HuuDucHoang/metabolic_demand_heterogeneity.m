@@ -96,13 +96,19 @@ parfor idx = 1:nJobs
 
     % atomic-ish save: write temp then move
     tmpname = [fname '.tmp'];
+
+    % pack variables into a *scalar* struct
+    Ssave = struct('lastAvg', lastAvg, 'si', si, 'mi', mi);
+
     try
-        save(tmpname,'lastAvg','si','mi','-v7.3', '-fromstruct');
-        movefile(tmpname,fname,'f');
+        % parfor-safe save from struct (optionally keep -v7.3)
+        save(tmpname, "-fromstruct", Ssave, "-v7");  % or "-v7.3" if needed
+        movefile(tmpname, fname, 'f');               % rename atomically
     catch ME
         warning('Save failed for seed=%d, Mindex=%d: %s', si, mi, ME.message);
         if exist(tmpname,'file'), delete(tmpname); end
     end
+
 end
 
 % ---------- reshape & analyse (allow missing as NaN) --------------------
