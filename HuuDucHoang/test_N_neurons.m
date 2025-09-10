@@ -10,7 +10,7 @@ N = 20;
 % seed = 7; % Unstable/Noisy Alternans (Alternate 7~9 to 19)
 % seed = 8; % Normal Eupneic (constant 19)
 % seed = 9; % Stable Alternans (19 vs 4)
-seed = 10; % Nonlinear Response, Heart Failure? (Mode 3)
+% seed = 10; % Nonlinear Response, Heart Failure? (Mode 3)
 % seed = 11; % Unstable Alternans (17 vs 9)
 % seed = 12; % Unstable Alternans (20 vs 11)
 % seed = 13; % Noisy Alternans (Alternate 9 to 14~15) --> Recheck at longer
@@ -23,7 +23,7 @@ seed = 10; % Nonlinear Response, Heart Failure? (Mode 3)
 % seed = 19; % Stable Alternans (19 vs 3) 
 % seed = 20; % Nonlinear/Irregular (most of peaks and troughs of 15 vs 12)
 
-rng(seed, 'twister');
+% rng(seed, 'twister');
 
 % Heterogeneity (you can set any sigma to zero if you want no variability)
 
@@ -36,19 +36,19 @@ rng(seed, 'twister');
 % thetaO2_mu  =  85;   thetaO2_sigma  = 8.5;
 % sigmaO2_mu  =  30;   sigmaO2_sigma  = 3;
 
-% Eleak_mu    = -65;   Eleak_sigma    = 0;
-% gNaP_mu     =   2.8; gNaP_sigma     = 0;
-% gsyn_mu     =   0;   gsyn_sigma     = 0;
-% phi_mu      =   0.3; phi_sigma      = 0;
-% thetaO2_mu  =  85;   thetaO2_sigma  = 0;
-% sigmaO2_mu  =  30;   sigmaO2_sigma  = 0;
+Eleak_mu    = -65;   Eleak_sigma    = 0;
+gNaP_mu     =   2.8; gNaP_sigma     = 0;
+gsyn_mu     =   0;   gsyn_sigma     = 0;
+phi_mu      =   0.3; phi_sigma      = 0;
+thetaO2_mu  =  85;   thetaO2_sigma  = 0;
+sigmaO2_mu  =  30;   sigmaO2_sigma  = 0;
 
-Eleak_mu    = -65;   Eleak_sigma    = 2;
-gNaP_mu     =   2.8; gNaP_sigma     = 0.1;
-gsyn_mu     =   0.1;   gsyn_sigma     = 0.003;
-phi_mu      =   0.3; phi_sigma      = 0.009;
-thetaO2_mu  =  85;   thetaO2_sigma  = 3;
-sigmaO2_mu  =  30;   sigmaO2_sigma  = 1;
+% Eleak_mu    = -65;   Eleak_sigma    = 2;
+% gNaP_mu     =   2.8; gNaP_sigma     = 0.1;
+% gsyn_mu     =   0.1;   gsyn_sigma     = 0.003;
+% phi_mu      =   0.3; phi_sigma      = 0.009;
+% thetaO2_mu  =  85;   thetaO2_sigma  = 3;
+% sigmaO2_mu  =  30;   sigmaO2_sigma  = 1;
 
 % Build the params struct (all draws happen inside)
 params = setup_params( ...
@@ -60,7 +60,7 @@ params = setup_params( ...
     thetaO2_mu,  thetaO2_sigma, ...
     sigmaO2_mu,  sigmaO2_sigma);
 
-save( sprintf('saved_params_seed%d.mat',seed), 'params' );
+% save( sprintf('saved_params_seed%d.mat',seed), 'params' );
 
 %% Initial conditions (use the same inits for each cell)
 % Single-cell inits from Diekman et al. 2017 (panel A):
@@ -72,7 +72,7 @@ save( sprintf('saved_params_seed%d.mat',seed), 'params' );
 %[V n h alpha vollung PO2lung PO2blood]
 initsA = [-60.3782 0.0006 0.667918 0.00136 2.3223 99.1582 98.0934];
 
-v0       = repmat(initsA(1), N, 1);
+v0       = repmat(initsA(1), N, 1) + 5*randn(N, 1);
 n0       = repmat(initsA(2), N, 1);
 h0       = repmat(initsA(3), N, 1);
 s0       = zeros(N,1);            % synaptic gates
@@ -84,7 +84,7 @@ PO2blood0= initsA(7);
 u0 = [v0; n0; h0; s0; alpha0; voll0; PO2lung0; PO2blood0];
 
 %% Integrate with ode15s
-tf      = 200000;   % ms
+tf      = 60000;   % ms
 opts    = odeset('RelTol',1e-9,'AbsTol',1e-9);
 [t,U]   = ode15s(@(t,u) closedloop_population(t,u,params), [0 tf], u0, opts);
 time_s  = t/1000;

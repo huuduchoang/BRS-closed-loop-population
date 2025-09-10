@@ -1,16 +1,16 @@
 % Figure Setup
 %% Number of neurons and heterogeneity settings
-N = 5; 
+N = 20; 
 % seed  = 2;
 % rng(seed, 'twister');
 
 % Heterogeneity settings
-Eleak_mu    = -65;   Eleak_sigma    = 2;
-gNaP_mu     =   2.8; gNaP_sigma     = 0.1;
-gsyn_mu     =   0.1;   gsyn_sigma     = 0.003;
-phi_mu      =   0.3; phi_sigma      = 0.003;
-thetaO2_mu  =  85;   thetaO2_sigma  = 3;
-sigmaO2_mu  =  30;   sigmaO2_sigma  = 1;
+Eleak_mu    = -65;   Eleak_sigma    = 0;
+gNaP_mu     =   2.8; gNaP_sigma     = 0;
+gsyn_mu     =   0;   gsyn_sigma     = 0;
+phi_mu      =   0.3; phi_sigma      = 0;
+thetaO2_mu  =  85;   thetaO2_sigma  = 0;
+sigmaO2_mu  =  30;   sigmaO2_sigma  = 0;
 
 % Build and save parameters
 params = setup_params(N, Eleak_mu, Eleak_sigma, gNaP_mu, gNaP_sigma, ...
@@ -30,13 +30,13 @@ PO2blood0= initsA(7);
 u0 = [v0; n0; h0; s0; alpha0; voll0; PO2lung0; PO2blood0];
 
 %% Integrate with ode15s for 60000 ms
-tf      = 200000;   % ms
+tf      = 100000;   % ms
 opts    = odeset('RelTol',1e-9,'AbsTol',1e-9);
 [t,U]   = ode15s(@(t,u) closedloop_population(t,u,params), [0 tf], u0, opts);
 time_s  = t/1000;
 
 %% Determine display window: last 15000 ms
-win_start = (tf - 20000)/1000;  % seconds
+win_start = (tf - 30000)/1000;  % seconds
 win_end   = tf/1000;            % seconds
 
 %% Extract signals

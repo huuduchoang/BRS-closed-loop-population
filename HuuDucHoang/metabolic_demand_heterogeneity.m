@@ -115,10 +115,10 @@ fill([x(valid) fliplr(x(valid))], ...
      [0.9 0.9 0.9], 'EdgeColor','none');
 plot(x, meanPO2, 'k-', 'LineWidth', 2);
 xlabel('M \times 10^{-5}','FontSize',14);
-ylabel('\langle P_{a}O_2\rangle \pm SEM (mmHg)','Interpreter','latex','FontSize',14);
+ylabel('$\langle P_{a}O_2\rangle \pm SEM (mmHg)$','Interpreter','latex','FontSize',14);
 grid on; box on; xlim([min(x) max(x)]);
 legend([arrayfun(@(s) sprintf('seed %d',s),1:nSeeds,'uni',0), ...
-        {'\pm1SEM envelope','Mean'}], 'Location','SouthWest','Interpreter','none');
+        {'$\pm1SEM$ envelope','Mean'}], 'Location','SouthWest','Interpreter','latex');
 
 fprintf('Finished sweep (some entries may still be NaN if wall-time hit).\n');
 
