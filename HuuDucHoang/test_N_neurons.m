@@ -38,7 +38,7 @@ N = 20;
 
 Eleak_mu    = -65;   Eleak_sigma    = 0;
 gNaP_mu     =   2.8; gNaP_sigma     = 0;
-gsyn_mu     =   0;   gsyn_sigma     = 0;
+gsyn_mu     =   0.1;   gsyn_sigma     = 0;
 phi_mu      =   0.3; phi_sigma      = 0;
 thetaO2_mu  =  85;   thetaO2_sigma  = 0;
 sigmaO2_mu  =  30;   sigmaO2_sigma  = 0;
@@ -70,9 +70,9 @@ params = setup_params( ...
 % 0.5, sigma = 0.1)
 % -60.3782 0.0006 0.667918 0.00136 2.3223 99.1582 98.0934 (eupneic, hetero)
 %[V n h alpha vollung PO2lung PO2blood]
-initsA = [-60.3782 0.0006 0.667918 0.00136 2.3223 99.1582 98.0934];
+initsA = [-58.5754 0.0006 0.7252 0.0010 2.2665 103.3461 102.222];
 
-v0       = repmat(initsA(1), N, 1) + 5*randn(N, 1);
+v0       = repmat(initsA(1), N, 1);
 n0       = repmat(initsA(2), N, 1);
 h0       = repmat(initsA(3), N, 1);
 s0       = zeros(N,1);            % synaptic gates
@@ -85,7 +85,8 @@ u0 = [v0; n0; h0; s0; alpha0; voll0; PO2lung0; PO2blood0];
 
 %% Integrate with ode15s
 tf      = 60000;   % ms
-opts    = odeset('RelTol',1e-9,'AbsTol',1e-9);
+% opts    = odeset('RelTol',1e-9,'AbsTol',1e-9);
+opts    = odeset('RelTol',1e-13,'AbsTol',1e-10);
 [t,U]   = ode15s(@(t,u) closedloop_population(t,u,params), [0 tf], u0, opts);
 time_s  = t/1000;
 
@@ -108,6 +109,18 @@ for i=1:N
   gtonic_all(:,i) = ...
     phi_vec(i).*(1 - tanh((PO2_b - th_vec(i))./sg_vec(i)));
 end
+
+%% Variance Calculations
+across.meanV     = mean(V_all,  2);
+across.varV      = var( V_all,  0, 2);
+across.alpha     = mean(alpha,  2);
+across.var_alpha      = var(alpha,  0, 2);
+across.mean_vol_lung = mean(vol_lung, 2);
+across.var_vol_lung = var(vol_lung, 0, 2);
+across.mean_PO2_lung = mean(PO2_lung, 2);
+across.var_PO2_lung = var(PO2_lung, 0, 2);
+across.mean_PO2_b = mean(PO2_b, 2);
+across.var_PO2_b = var(PO2_b, 0, 2);
 
 %% 5) Figure 1: 2×3 closed‐loop grid, overlaying all N where appropriate
 figure('Position',[100 100 900 600],'Color','w');
@@ -178,3 +191,23 @@ end
 hold off
 ylabel('n_i'), title('CPG activation (n)')
 xlabel('Time (s)'), xlim([0 tf/1000]), box on, grid on
+
+%% Variance Dashboar
+
+figure('Position',[100 100 900 500],'Color','w');
+tlv = tiledlayout(2,3,'TileSpacing','compact','Padding','compact');
+
+nexttile; plot(time_s, across.varV,'LineWidth',1.2); grid on; box on
+xlabel('Time (s)'); ylabel('var V_i'); title('Across-neuron var(V)')
+
+nexttile; plot(time_s, across.var_alpha,'LineWidth',1.2); grid on; box on
+xlabel('Time (s)'); ylabel('var alpha_i'); title('Across-neuron var(alpha)')
+
+nexttile; plot(time_s, across.var_vol_lung,'LineWidth',1.2); grid on; box on
+xlabel('Time (s)'); ylabel('var vollung_i'); title('Across-neuron var(vollung)')
+
+nexttile; plot(time_s, across.var_PO2_lung,'LineWidth',1.2); grid on; box on
+xlabel('Time (s)'); ylabel('var lungO2_i'); title('Across-neuron var(lungO2)')
+
+nexttile; plot(time_s, across.var_PO2_b,'LineWidth',1.2); grid on; box on
+xlabel('Time (s)'); ylabel('var PO2_b'); title('Across-neuron var(bloodO2)')

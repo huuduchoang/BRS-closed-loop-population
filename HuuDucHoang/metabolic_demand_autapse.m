@@ -60,8 +60,8 @@ for gi = 1:nG
 
   % ---- warm-up closed loop at reference M ----
   p0.M = warmRefM;
-  [~, U0c] = ode15s(@(t,u) closedloop_populationM(t,u,p0), [0 tf],      u0, opts);
-  [~, U1c] = ode15s(@(t,u) closedloop_populationM(t,u,p0), [0 tf], U0c(end,:), opts);
+  [~, U0c] = ode15s(@(t,u) closedloop_populationM_autapse(t,u,p0), [0 tf],      u0, opts);
+  [~, U1c] = ode15s(@(t,u) closedloop_populationM_autapse(t,u,p0), [0 tf], U0c(end,:), opts);
   U1_closed_end = U1c(end,:);
 
   % ---- sweep M in parallel for this g_self (closed loop only) ----

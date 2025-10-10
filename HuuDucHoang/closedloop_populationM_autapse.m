@@ -1,4 +1,4 @@
-function z = closedloop_populationM(t,u,params)
+function z = closedloop_populationM_autapse(t,u,params)
 % params.N           = number of pacemaker neurons
 % params.Eleak_mu    = mean of E_L (mV)
 % params.Eleak_sigma = sd   of E_L (mV)
@@ -18,6 +18,12 @@ function z = closedloop_populationM(t,u,params)
 %         PO2blood ];
 
 %% Unpack State variables
+
+if isfield(params,'Mfun') && ~isempty(params.Mfun)
+    M = params.Mfun(t);        % time-varying M
+else
+    M = params.M;              % fixed M
+end
 
 N = params.N;
 v = u(1 : N);
@@ -110,7 +116,6 @@ taulb = 500;
 
 %% Blood oxygen
 Hb = 150; volblood = 5; eta = Hb*1.36; gamma = volblood/22400; betaO2 = 0.03;
-M = params.M;
 
 c = 2.5; K = 26;
 SaO2 = (PO2blood^c)/(PO2blood^c+K^c);
