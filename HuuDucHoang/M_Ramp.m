@@ -272,3 +272,33 @@ for m = mCand
     end
 end
 end
+
+%% Figure showing one way of shifting the time and PaO2 levels 
+% so that the PaO2 curves match as closely as possible near the collapse
+% point.
+
+figure
+subplot(3,1,1)
+plot(tsA,U_all{1}.V)
+hold on
+plot(tsB-63,U_all{2}.V)
+grid on
+ylabel('Voltage (mV)')
+set(gca,'FontSize',20)
+
+subplot(3,1,2)
+plot(tsA,vL_A)
+hold on
+plot(tsB-63,vL_B)
+grid on
+ylabel('Lung Volume (L)')
+set(gca,'FontSize',20)
+
+subplot(3,1,3)
+plot(tsA,U_all{1}.PO2b)
+hold on
+plot(tsB-63,U_all{2}.PO2b+2)
+grid on
+xlabel('Time (sec)')
+ylabel('PaO2 (mm Hg)')
+set(gca,'FontSize',20)
