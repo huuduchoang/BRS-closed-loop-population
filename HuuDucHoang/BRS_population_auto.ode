@@ -5,7 +5,7 @@ param h       = -2.0
 
 # set gsyn and gtonic accordingly
 param gsyn    = 0.1
-param gtonic  = 0.3
+param gtonic  = 0.012
 
 param c        = 21
 param gnap     = 2.8
