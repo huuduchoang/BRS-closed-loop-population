@@ -1,5 +1,10 @@
-param C=21
+## Diekman et al 2017 J. Neurophys. Closed-loop breathing regulation model 
+# with an additional autapse representing the effect of a network of identical 
+# fully synchronized cells.
+
 param W=0.00
+
+param C=21
 param gnap=2.8
 param gna=28
 param gk=11.2
@@ -66,8 +71,18 @@ alpha'    = r*tpop*(1-alpha) - r*alpha
 vol_dot   = -e2*(vol-vol0) + e1*alpha
 vol'      = vol_dot
 
-flow = vol_dot/(1 + exp(-ksig*vol_dot))
-po2lung'  = (1/vol)*(po2ext - po2lung) * flow - (1/taulb)*(po2lung - po2blood)
+# Add a flag such that r=1 during inhalation, r=0 during exhalation
+Inhale'	= 0
+# Initially exhaling!
+init 	Inhale = 0
+global 1 vol_dot {Inhale=1}
+global -1 vol_dot {Inhale=0}
+
+#flow = 0*(vol_dot/(1 + exp(-ksig*vol_dot)))
+#po2lung'  = (1/vol)*(po2ext - po2lung) * flow - (1/taulb)*(po2lung - po2blood)
+
+po2lung'  = (1/vol)*(po2ext - po2lung) * Inhale * vol_dot - (1/taulb)*(po2lung - po2blood)
+
 po2blood' = ( ((1/taulb)*(po2lung - po2blood)*(vol/(rgas*temp))) -  m*(volblood/22400)*(eta*sa_o2 + beta_o2*po2blood) ) / ((volblood/22400)*(beta_o2 + eta*partial))
 # ---------------------
 # Currents and gates
@@ -118,7 +133,7 @@ init po2blood=102.2224
 # ---------------------
 # Numerics & display
 # ---------------------
-@ total=40000, dt=0.1, meth=cvode, maxstor=10000000
+@ total=40000, dt=0.1, meth=cvode, maxstor=10000000,bounds=100000000000
 @ tol=1e-8, atol=1e-8
 @ xlo=0, xhi=40000, ylo=-80, yhi=150
 
