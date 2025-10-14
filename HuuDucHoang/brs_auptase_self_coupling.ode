@@ -1,0 +1,129 @@
+param C=21
+param W=0.00
+param gnap=2.8
+param gna=28
+param gk=11.2
+param gl=2.8
+param ena=50
+param ek=-85
+param el=-65
+param esyn=0
+
+param theta_mp=-40
+param sigma_mp=-6
+param theta_h=-48
+param sigma_h=6
+param taumax_h=10000
+
+param theta_m=-34
+param sigma_m=-5
+param theta_n=-29
+param sigma_n=-4
+param taumax_n=10
+
+param tau_s=5
+param k_r=1
+param theta_s=-10
+param sigma_s=-5
+
+param r=0.001
+param tmax=1
+param vt=2
+param kp=5
+
+param e1=0.4
+param e2=0.0025
+param vol0=2
+
+param po2ext=(760-47)*0.21
+param rgas=62.364
+param temp=310
+param taulb=500
+
+param m=8e-6
+
+param hb=150
+param volblood=5
+param eta=hb*1.36
+param beta_o2=0.03
+
+param c_o2=2.5
+param k_o2=26
+
+param phi=0.3
+param theta_o2=85
+param sigma_o2=30
+param ksig=100
+# ---------------------
+# State equations
+# ---------------------
+v'        = -(inap + ina + ik + il + iton + isyn)/C
+n'        = (n_inf - n)/tau_n
+h'        = (h_inf - h)/tau_h
+s'        = ((1-s)*s_inf - k_r*s)/tau_s
+
+alpha'    = r*tpop*(1-alpha) - r*alpha
+vol_dot   = -e2*(vol-vol0) + e1*alpha
+vol'      = vol_dot
+
+flow = vol_dot/(1 + exp(-ksig*vol_dot))
+po2lung'  = (1/vol)*(po2ext - po2lung) * flow - (1/taulb)*(po2lung - po2blood)
+po2blood' = ( ((1/taulb)*(po2lung - po2blood)*(vol/(rgas*temp))) -  m*(volblood/22400)*(eta*sa_o2 + beta_o2*po2blood) ) / ((volblood/22400)*(beta_o2 + eta*partial))
+# ---------------------
+# Currents and gates
+# ---------------------
+mp_inf = 1/(1+exp((v - theta_mp)/sigma_mp))
+inap   = gnap*mp_inf*h*(v - ena)
+
+h_inf  = 1/(1+exp((v - theta_h)/sigma_h))
+tau_h  = taumax_h/cosh((v - theta_h)/(2*sigma_h))
+
+m_inf  = 1/(1+exp((v - theta_m)/sigma_m))
+ina    = gna*(m_inf^3)*(1-n)*(v - ena)
+
+n_inf  = 1/(1+exp((v - theta_n)/sigma_n))
+tau_n  = taumax_n/cosh((v - theta_n)/(2*sigma_n))
+
+ik     = gk*(n^4)*(v - ek)
+il     = gl*(v - el)
+
+s_inf  = 1/(1+exp((v - theta_s)/sigma_s))
+isyn   = W*s*(v - esyn)
+
+# Motor-pool proxy (single cell)
+tpop   = tmax * ( 1/(1+exp(-(v - vt)/kp)) )
+
+# Blood O2 saturation and derivative
+sa_o2  = (po2blood^c_o2)/(po2blood^c_o2 + k_o2^c_o2)
+partial= (c_o2*(po2blood^(c_o2-1))) * ( 1/(po2blood^c_o2 + k_o2^c_o2) - (po2blood^c_o2)/(po2blood^c_o2 + k_o2^c_o2)^2 )
+
+# Chemosensory tonic drive
+gton   = phi*(1 - tanh((po2blood - theta_o2)/sigma_o2))
+iton   = gton*(v - esyn)
+
+aux dPAO2L = (1/vol)*(po2ext - po2lung)* max(-e2*(vol-vol0)+e1*alpha, 0) - (1/taulb)*(po2lung - po2blood)
+aux lungvol = -e2*(vol-vol0) + e1*alpha
+# ---------------------
+# Initial conditions
+# ---------------------
+init v=-58.5754
+init n=0.0006
+init h=0.7252
+init s=0
+init alpha=0.0010
+init vol=2.2665
+init po2lung=103.3461
+init po2blood=102.2224
+
+# ---------------------
+# Numerics & display
+# ---------------------
+@ total=40000, dt=0.1, meth=cvode, maxstor=10000000
+@ tol=1e-8, atol=1e-8
+@ xlo=0, xhi=40000, ylo=-80, yhi=150
+
+# AUTO settings: continue in parameter W
+@ parmin=-0.02, parmax=0.25, autoxmin=-2, autoxmax=2, autoymin=-80, autoymax=20
+@ dsmin=1e-4, dsmax=0.1, nmax=500
+
+done
