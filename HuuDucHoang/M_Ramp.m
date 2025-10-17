@@ -9,7 +9,7 @@ params_base = setup_params( ...
     N, ...
     -65, 0, ...             % E_leak mean, sigma
     2.8, 0, ...             % g_NaP mean, sigma
-    0.1, 0, ...             % g_syn mean, sigma (unused for N=1 if autapse via W)
+    0, 0, ...             % g_syn mean, sigma (unused for N=1 if autapse via W)
     0.3, 0, ...             % phi mean, sigma
     85,  0, ...             % theta_O2 mean, sigma
     30,  0);                % sigma_O2 mean, sigma
@@ -53,7 +53,6 @@ for k = 1:numel(Wvals)
     p        = params_base;
     p.W      = Wvals(k);
     p.Mfun   = Mfun;
-
     [t,U]    = ode15s(@(tt,u) closedloop_populationM_autapse(tt,u,p), [0 t_end], u0, opts);
     ts       = t/1000;                       % seconds
     M_t      = Mfun(t);

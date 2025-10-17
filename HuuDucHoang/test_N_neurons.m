@@ -38,7 +38,7 @@ N = 20;
 
 Eleak_mu    = -65;   Eleak_sigma    = 0;
 gNaP_mu     =   2.8; gNaP_sigma     = 0;
-gsyn_mu     =   0.1;   gsyn_sigma     = 0;
+gsyn_mu     =   0;   gsyn_sigma     = 0;
 phi_mu      =   0.3; phi_sigma      = 0;
 thetaO2_mu  =  85;   thetaO2_sigma  = 0;
 sigmaO2_mu  =  30;   sigmaO2_sigma  = 0;
@@ -70,7 +70,7 @@ params = setup_params( ...
 % 0.5, sigma = 0.1)
 % -60.3782 0.0006 0.667918 0.00136 2.3223 99.1582 98.0934 (eupneic, hetero)
 %[V n h alpha vollung PO2lung PO2blood]
-initsA = [-58.5754 0.0006 0.7252 0.0010 2.2665 103.3461 102.222];
+initsA = [-58.5754 0.0006 0.7252 0.0010 2.2665 103.3461 102.2224];
 
 v0       = repmat(initsA(1), N, 1);
 n0       = repmat(initsA(2), N, 1);

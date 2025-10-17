@@ -18,7 +18,6 @@ function z = closedloop_populationM_autapse(t,u,params)
 %         PO2blood ];
 
 %% Unpack State variables
-
 if isfield(params,'Mfun') && ~isempty(params.Mfun)
     M = params.Mfun(t);        % time-varying M
 else
@@ -46,7 +45,6 @@ gsyn = params.W;
 phi_vec = params.phi;
 thetaO2_vec = params.thetaO2;
 sigmaO2_vec = params.sigmaO2;
-
 %% CPG 
 
 % capacitance
@@ -62,38 +60,38 @@ Ena=50; Ek=-85; Esyn=0;
 theta_mp = -40;  sigma_mp = -6; 
 theta_h = -48; sigma_h = 6; taumax_h = 10000;
 
-mp_inf = 1 ./ (1+exp((v-theta_mp)/sigma_mp));
-h_inf = 1 ./ (1+exp((v-theta_h)/sigma_h));
-tau_h = taumax_h ./ cosh((v-theta_h)/(2*sigma_h));
+mp_inf = 1 / (1+exp((v-theta_mp)/sigma_mp));
+h_inf = 1 / (1+exp((v-theta_h)/sigma_h));
+tau_h = taumax_h / cosh((v-theta_h)/(2*sigma_h));
 
-Inap = gnap .* mp_inf .* h .* (v-Ena);
+Inap = gnap * mp_inf * h * (v-Ena);
 
 % transient sodium
 theta_m = -34; sigma_m = -5;
 
-m_inf = 1 ./ (1+exp((v-theta_m)/sigma_m));
+m_inf = 1 / (1+exp((v-theta_m)/sigma_m));
 
-Ina = gna .* (m_inf.^3) .* (1-n) .* (v-Ena);
+Ina = gna * (m_inf.^3) * (1-n) * (v-Ena);
 
 % potassium
 theta_n = -29; sigma_n = -4; taumax_n = 10;
 
-Ik = gk .* (n.^4) .* (v-Ek);
+Ik = gk * (n.^4) * (v-Ek);
 
-n_inf = 1 ./ (1+exp((v-theta_n)/sigma_n));
-tau_n = taumax_n ./ cosh((v-theta_n)/(2*sigma_n));
+n_inf = 1 / (1+exp((v-theta_n)/sigma_n));
+tau_n = taumax_n / cosh((v-theta_n)/(2*sigma_n));
 
 % leak
-Il = gl .* (v-El);
+Il = gl * (v-El);
 
 % synaptic gating
 tau_s = 5;
 k_r = 1;
 thetas = -10; % half-activation
 sigmas = -5;
-s_inf = 1./ (1 + exp((v - thetas)/sigmas));
-g_in = gsyn.' * s;
-Isyn = g_in .* (v - Esyn);
+s_inf = 1/ (1 + exp((v - thetas)/sigmas));
+g_in = gsyn' * s;
+Isyn = g_in * (v - Esyn);
 
 %% Motor pool
 
@@ -127,17 +125,17 @@ Jbt=M*CaO2*gamma;
 
 %% Chemosensory feedback
 
-gtonic_vec = phi_vec .* (1 - tanh((PO2blood - thetaO2_vec) ./ sigmaO2_vec));
+gtonic_vec = phi_vec * (1 - tanh((PO2blood - thetaO2_vec) / sigmaO2_vec));
 
-Itonic = gtonic_vec .* (v-Esyn);
+Itonic = gtonic_vec * (v-Esyn);
 
 %% Differential equations
 
 z = zeros(size(u));
-z(1 : N) = (-Inap-Ina-Ik-Il-Itonic-Isyn)./C;
-z(N+1 : 2*N) = (n_inf-n)./tau_n;
+z(1 : N) = (-Inap-Ina-Ik-Il-Itonic-Isyn)/C;
+z(N+1 : 2*N) = (n_inf-n)/tau_n;
 z(2*N+1 : 3*N) = (h_inf-h)./tau_h;
-z(3*N+1 : 4*N) = ((1 - s) .* s_inf  -  k_r .* s) ./ tau_s;
+z(3*N+1 : 4*N) = ((1 - s) * s_inf  -  k_r * s) / tau_s;
 z(4*N+1) = r*Tpop*(1-alpha)-r*alpha;
 z(4*N+2) = -E1*(vollung-Vol0)+E2*alpha;
 z(4*N+3) = (1/vollung)*(PO2ext-PO2lung)*dvolrhs-Jlb*(R*Temp/vollung);
