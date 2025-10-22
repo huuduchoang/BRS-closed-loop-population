@@ -2,7 +2,7 @@
 # with an additional autapse representing the effect of a network of identical 
 # fully synchronized cells.
 
-param W=1.0
+param W=0.0
 
 param C=21
 param gnap=2.8
@@ -45,7 +45,8 @@ param rgas=62.364
 param temp=310
 param taulb=500
 
-param m=8e-6
+# param m=8e-6
+param m=1.4e-5
 
 param volblood=5
 param eta=204
@@ -110,14 +111,23 @@ po2blood'  = (Jlb - Jbt)/(zeta*(beta_o2 + eta*dSaO2_dPO2))
 # ---------------------
 # Initial conditions
 # ---------------------
-init v        = -58.5754
-init n        = 0.0006
-init h        = 0.7252
-init s        = 0
-init alpha    = 0.0010
-init vol      = 2.2665
-init po2lung  = 103.3461
-init po2blood = 102.2224
+# init v        = -58.5754
+# init n        = 0.0006
+# init h        = 0.7252
+# init s        = 0
+# init alpha    = 0.0010
+# init vol      = 2.2665
+# init po2lung  = 103.3461
+# init po2blood = 102.2224
+
+init v        = -47.04
+init n        = 0.01076
+init h        = 0.34119
+init s        = 0.00063186
+init alpha    = 0.002913
+init vol      = 2.445775
+init po2lung  = 17.820
+init po2blood = 17.1124
 
 aux gton_fig     = phi*(1 - tanh((po2blood - theta_o2)/sigma_o2))
 aux vol_raw_fig  = -e2*(vol - vol0) + e1*alpha
