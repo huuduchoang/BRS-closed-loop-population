@@ -1,4 +1,5 @@
-clear all; clc;
+set(0,'DefaultFigureVisible','off');
+mkdir results
 
 %% 1) Common setup: single neuron with optional self-coupling (autapse)
 N = 1;
@@ -70,15 +71,15 @@ for gi = 1:nG
 
     % 5 consecutive 60 s to settle + average last (6th) 60 s
     inits = U1_closed_end;
-    [~, U2] = ode15s(@(t,u) closedloop_populationM(t,u,p), [tf     2*tf], inits, opts);
+    [~, U2] = ode15s(@(t,u) closedloop_populationM_autapse_ReLU(t,u,p), [tf     2*tf], inits, opts);
     inits   = U2(end,:);
-    [~, U3] = ode15s(@(t,u) closedloop_populationM(t,u,p), [2*tf  3*tf], inits, opts);
+    [~, U3] = ode15s(@(t,u) closedloop_populationM_autapse_ReLU(t,u,p), [2*tf  3*tf], inits, opts);
     inits   = U3(end,:);
-    [~, U4] = ode15s(@(t,u) closedloop_populationM(t,u,p), [3*tf  4*tf], inits, opts);
+    [~, U4] = ode15s(@(t,u) closedloop_populationM_autapse_ReLU(t,u,p), [3*tf  4*tf], inits, opts);
     inits   = U4(end,:);
-    [~, U5] = ode15s(@(t,u) closedloop_populationM(t,u,p), [4*tf  5*tf], inits, opts);
+    [~, U5] = ode15s(@(t,u) closedloop_populationM_autapse_ReLU(t,u,p), [4*tf  5*tf], inits, opts);
     inits   = U5(end,:);
-    [t6, U6] = ode15s(@(t,u) closedloop_populationM(t,u,p), [5*tf  6*tf], inits, opts);
+    [t6, U6] = ode15s(@(t,u) closedloop_populationM_autapse_ReLU(t,u,p), [5*tf  6*tf], inits, opts);
 
     pb = U6(:,4*N+4);  % PaO2 index (with N=1)
     avgClosed(gi,ix) = trapz(t6,pb) / (t6(end)-t6(1));
@@ -109,3 +110,6 @@ xlim([min(Mvals) max(Mvals)]);
 lg = legend(arrayfun(@(g) sprintf('$g_{\\rm self}=%.2f$',g), gSelfVals, 'uni',0), ...
             'Location','northeastoutside','Interpreter','latex');
 set(lg,'Box','off');
+
+save('results/avgClosed.mat','avgClosed','Mvals','gSelfVals');
+exportgraphics(gcf,'results/avgClosed.png','Resolution',250);
