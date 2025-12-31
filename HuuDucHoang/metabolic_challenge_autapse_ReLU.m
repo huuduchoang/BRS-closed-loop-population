@@ -3,6 +3,11 @@ mkdir results
 
 %% 1) Common setup: single neuron with optional self-coupling (autapse)
 N = 1;
+nWorkers = str2double(getenv('SLURM_CPUS_PER_TASK'));  % or SLURM_CPUS_PER_TASK
+if isnan(nWorkers) || nWorkers < 1, nWorkers = 1; end
+if nWorkers > 1
+    try parpool('local', nWorkers); catch, end
+end
 
 Eleak_mu    = -65;   Eleak_sigma    = 0;
 gNaP_mu     =   2.8; gNaP_sigma     = 0;
@@ -49,7 +54,6 @@ avgClosed = nan(nG,nM);
 
 %% 4) For each g_self: warm up at reference M, then parfor sweep of M (closed loop only)
 warmRefM = 8e-6;
-
 for gi = 1:nG
   gself = gSelfVals(gi);
 
